@@ -85,11 +85,13 @@ stdenv.mkDerivation rec {
     pushd $TMPDIR
     echo 'int main() { return 42; }' >test.c
     for LTO in -flto ""; do
-      # wasm2c doesn't work with PIC
-      $out/bin/emcc -s WASM2C -s STANDALONE_WASM $LTO test.c
+      for EXCEPTIONS in "-s DISABLE_EXCEPTION_CATCHING=0" ""; do
+        # wasm2c doesn't work with PIC
+        $out/bin/emcc -s WASM2C -s STANDALONE_WASM $EXCEPTIONS $LTO test.c
 
-      for RELOCATABLE in "" "-s RELOCATABLE"; do
-        $out/bin/emcc $RELOCATABLE $LTO test.c
+        for RELOCATABLE in "" "-s RELOCATABLE"; do
+          $out/bin/emcc $RELOCATABLE $EXCEPTIONS $LTO test.c
+        done
       done
     done
     popd
