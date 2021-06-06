@@ -47,9 +47,7 @@ let
     ];
 
     postPatch = ''
-      sed -i -e 's/DriverArgs.hasArg(options::OPT_nostdlibinc)/true/' \
-             -e 's/Args.hasArg(options::OPT_nostdlibinc)/true/' \
-             lib/Driver/ToolChains/*.cpp
+      sed -i -e 's%\(Driver\)?Args.hasArg(options::OPT_nostdlibinc)%(& \&\& SysRoot != "/")%' lib/Driver/ToolChains/*.cpp
 
       # Patch for standalone doc building
       sed -i '1s,^,find_package(Sphinx REQUIRED)\n,' docs/CMakeLists.txt
