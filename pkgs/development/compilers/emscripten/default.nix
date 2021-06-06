@@ -1,17 +1,17 @@
 { lib, stdenv, fetchFromGitHub, python3, nodejs, closurecompiler
 , jre, binaryen
-, llvmPackages_11
+, llvmPackages_12
 , symlinkJoin, makeWrapper
 , mkYarnModules
 }:
 
 stdenv.mkDerivation rec {
   pname = "emscripten";
-  version = "2.0.1";
+  version = "2.0.19";
 
   llvmEnv = symlinkJoin {
     name = "emscripten-llvm-${version}";
-    paths = with llvmPackages_11; [ clang-unwrapped lld llvm ];
+    paths = with llvmPackages_12; [ clang-unwrapped lld llvm ];
   };
 
   nodeModules = mkYarnModules {
@@ -26,7 +26,7 @@ stdenv.mkDerivation rec {
   src = fetchFromGitHub {
     owner = "emscripten-core";
     repo = "emscripten";
-    sha256 = "06dsd819qjv4n2ihrz1mpn5aigmbv0gpkm7iw06wrqx30nzphnpk";
+    sha256 = "0paygdlqm58y6y8h34f0cnc9gj2kzp1mdhx1lmziix2c3svavprz";
     rev = version;
   };
 
@@ -74,7 +74,7 @@ stdenv.mkDerivation rec {
     chmod -R +w $appdir
 
     mkdir -p $out/bin
-    for b in em++ em-config emar embuilder.py emcc emcmake emconfigure emlink.py emmake emranlib emrun emscons; do
+    for b in em++ em-config emar embuilder.py emcc emcmake emconfigure emmake emranlib emrun emscons; do
       makeWrapper $appdir/$b $out/bin/$b \
         --set NODE_PATH ${nodeModules}/node_modules \
         --set EM_EXCLUSIVE_CACHE_ACCESS 1 \
